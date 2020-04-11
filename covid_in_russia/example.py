@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+import pywb
 
 def some_function(first: int, second: int) -> int:
     """
@@ -15,3 +14,7 @@ def some_function(first: int, second: int) -> int:
     Enjoy!
     """
     return first + second
+
+
+def process():
+    pass
