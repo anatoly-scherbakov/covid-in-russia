@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-warc_file=warc/stopcoronavirus-russia."$(date +"%T")"
-
 mkdir -p warc/
+cd warc/ || exit
+
+warc_file=stopcoronavirus-russia."$(date +"%s")"
 
 wget \
+  --delete-after --no-directories \
   -e robots=off \
   --span-hosts \
   --no-clobber \
@@ -15,3 +17,5 @@ wget \
   --convert-links \
   https://стопкоронавирус.рф \
   --warc-file "$warc_file"
+
+ipwb index "$warc_file.warc.gz" > "$warc_file.cdxj"
