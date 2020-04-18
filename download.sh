@@ -19,3 +19,7 @@ wget \
   --warc-file "$warc_file"
 
 ipwb index "$warc_file.warc.gz" > "$warc_file.cdxj"
+
+index_file_hash=$(ipfs add -Q "$warc_file.cdxj")
+
+echo "$index_file_hash"
