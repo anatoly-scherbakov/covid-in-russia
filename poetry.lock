@@ -643,7 +643,7 @@ description = "Python IPFS HTTP CLIENT library"
 name = "ipfshttpclient"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-version = "0.4.12"
+version = "0.4.13.2"
 
 [package.dependencies]
 multiaddr = ">=0.0.7"
@@ -1658,7 +1658,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "b1a2269b0a54ac2c371a588f6ac92a561f69f2c5e4818a7a6fc3908292a59097"
+content-hash = "81fe0f5fc39a7c13901946466d1eed676a1dc7d35ed1f06d00a69500e9d818a3"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -2020,8 +2020,8 @@ importlib-resources = [
     {file = "importlib_resources-1.4.0.tar.gz", hash = "sha256:4019b6a9082d8ada9def02bece4a76b131518866790d58fdda0b5f8c603b36c2"},
 ]
 ipfshttpclient = [
-    {file = "ipfshttpclient-0.4.12-py2.py3-none-any.whl", hash = "sha256:bee95c500edf669bb8a984d5588fc133fda9ec67845c5688bcbbea030a03f10f"},
-    {file = "ipfshttpclient-0.4.12.tar.gz", hash = "sha256:0a199a1005fe44bff9da28b5af4785b0b09ca700baac9d1e26718fe23fe89bb7"},
+    {file = "ipfshttpclient-0.4.13.2-py2.py3-none-any.whl", hash = "sha256:c037347c4d369062617434a303682596d1a2983b365c021193af00c9b0f1914a"},
+    {file = "ipfshttpclient-0.4.13.2.tar.gz", hash = "sha256:468d7c72ef309a91cf9c72a477da89f428757b32c30636da7c77a041ca01b2b3"},
 ]
 ipwb = [
     {file = "ipwb-0.2019.8.15.213-py2-none-any.whl", hash = "sha256:37b7cc33acc36a9a59a4013190b2e4593d44ba696edd1512a0e8971b9e1676be"},

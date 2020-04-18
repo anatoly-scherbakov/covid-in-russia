@@ -33,6 +33,7 @@ python = "^3.6"
 archivenow = "^2020.4.1"
 pywb = "^2.3.5"
 ipwb = "^0.2019.8"
+ipfshttpclient = "^0.4.13"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"
