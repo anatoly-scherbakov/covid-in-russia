@@ -1,9 +1,9 @@
 import dataclasses
 import operator
 
-from covid_in_russia import models
-
 import bs4
+
+from covid_in_russia import models
 
 
 def _fetch_cell(row: bs4.Tag, selector: str) -> int:
@@ -13,12 +13,6 @@ def _fetch_cell(row: bs4.Tag, selector: str) -> int:
 
 def _row_to_record(row: bs4.Tag) -> models.Record:
     """Convert a tr tag into Record model."""
-    selectors = [
-        '.d-map__indicator_sick',
-        '.d-map__indicator_healed',
-        '.d-map__indicator_die',
-    ]
-
     return models.Record(
         region=row.th.text,
         total=_fetch_cell(row, '.d-map__indicator_sick'),

@@ -26,4 +26,10 @@ class Totals:
 class Report:
     per_region: List[Record]
     totals: Optional[Totals] = None
-    timestamp: Optional[int] = dataclasses.field(default_factory=timestamp)
+
+    parsed_time: Optional[int] = None
+
+    index_cid: Optional[str] = None
+    page_cid: Optional[str] = None
+
+    calculated_time: Optional[int] = dataclasses.field(default_factory=timestamp)
