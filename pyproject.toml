@@ -32,8 +32,8 @@ classifiers = [
 python = "^3.6"
 archivenow = "^2020.4.1"
 pywb = "^2.3.5"
-ipwb = { git = "git@github.com:anatoly-scherbakov/ipwb.git", branch = "anatoly-scherbakov" }
 fire = "^0.3.1"
+ipwb = "^0.2020.4"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"

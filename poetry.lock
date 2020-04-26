@@ -668,7 +668,7 @@ description = "InterPlanetary Wayback (ipwb): Web Archive integration with IPFS"
 name = "ipwb"
 optional = false
 python-versions = "*"
-version = "0.2019.8.15.213"
+version = "0.2020.4.24.1847"
 
 [package.dependencies]
 Flask = "1.1.1"
@@ -679,11 +679,6 @@ requests = ">=2.19.1"
 six = "1.11.0"
 surt = ">=0.3.0"
 warcio = ">=1.5.3"
-
-[package.source]
-reference = "54e3f9a93cc0fbda5260daae8628170215d1d9db"
-type = "git"
-url = "git@github.com:anatoly-scherbakov/ipwb.git"
 
 [[package]]
 category = "dev"
@@ -1683,7 +1678,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "6e2283cac378d6ef229c48a1a477e4564f3355122fcb39a1136bf568fa0025a4"
+content-hash = "d1b801a1851169e98cf0d0e2d37390719284f79f9885ed43420bbe58a9fce51e"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -2051,7 +2046,10 @@ ipfshttpclient = [
     {file = "ipfshttpclient-0.4.13.2-py2.py3-none-any.whl", hash = "sha256:c037347c4d369062617434a303682596d1a2983b365c021193af00c9b0f1914a"},
     {file = "ipfshttpclient-0.4.13.2.tar.gz", hash = "sha256:468d7c72ef309a91cf9c72a477da89f428757b32c30636da7c77a041ca01b2b3"},
 ]
-ipwb = []
+ipwb = [
+    {file = "ipwb-0.2020.4.24.1847-py3-none-any.whl", hash = "sha256:e7ae2c47954bbb91743e21297d1001cbc892231a0e8972c4bfc86721710fc6e2"},
+    {file = "ipwb-0.2020.4.24.1847.tar.gz", hash = "sha256:e86e3a3730cdb8ce26594538eaece8734a2e11b2bc676cb6505da858d28e800a"},
+]
 isort = [
     {file = "isort-4.3.21-py2.py3-none-any.whl", hash = "sha256:6e811fcb295968434526407adb8796944f1988c5b65e8139058f2014cbe100fd"},
     {file = "isort-4.3.21.tar.gz", hash = "sha256:54da7e92468955c4fceacd0c86bd0ec997b0e1ee80d97f67c35a78b719dccab1"},
