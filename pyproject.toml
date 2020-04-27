@@ -34,6 +34,8 @@ archivenow = "^2020.4.1"
 pywb = "^2.3.5"
 fire = "^0.3.1"
 ipwb = "^0.2020.4"
+PyLD = "^2.0.2"
+SPARQLWrapper = "^1.8.5"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"
@@ -53,3 +55,4 @@ sphinx-autodoc-typehints = "<1.11"
 doc8 = "^0.8"
 m2r = "^0.2"
 tomlkit = "^0.5"
+ipython = "^7.13.0"

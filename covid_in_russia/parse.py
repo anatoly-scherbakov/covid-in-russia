@@ -14,7 +14,7 @@ def _fetch_cell(row: bs4.Tag, selector: str) -> int:
 def _row_to_record(row: bs4.Tag) -> models.Record:
     """Convert a tr tag into Record model."""
     return models.Record(
-        region=row.th.text,
+        region=row.th.text.strip(),
         total=_fetch_cell(row, '.d-map__indicator_sick'),
         recovered=_fetch_cell(row, '.d-map__indicator_healed'),
         deceased=_fetch_cell(row, '.d-map__indicator_die'),

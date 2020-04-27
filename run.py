@@ -4,7 +4,8 @@ import json
 from typing import NoReturn
 from fire import Fire
 import ipfshttpclient
-from covid_in_russia import web_archive_index, parse, models
+from covid_in_russia import web_archive_index, parse, models, enhance
+from pyld import jsonld
 
 
 HOMEPAGE = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/'
@@ -14,14 +15,39 @@ def report_to_jsonld(report: models.Report):
     result = dataclasses.asdict(report)
 
     result.update({
-        'index_cid': {
-            '@id': f'ipfs://{report.index_cid}',
-        },
-        'page_cid': {
-            '@id': f'ipfs://{report.page_cid}',
-        },
+        '@context': {
+            'index_cid': {
+                '@id': 'https://schema.org/isBasedOnUrl',
+                '@type': '@id',
+            },
+            'page_cid': {
+                '@id': 'https://schema.org/isBasedOnUrl',
+                '@type': '@id',
+            },
+            'per_region': {
+                '@id': 'https://schema.org/ItemList',
+                '@container': '@list',
+            },
+            'region': {
+                '@id': 'https://schema.org/Place',
+                '@type': '@id',
+            },
+            'deceased': {
+                '@id': 'http://dbpedia.org/page/Death',
+                '@type': 'xsd:integer'
+            },
+            'recovered': {
+                '@id': 'http://dbpedia.org/page/Recovery',
+                '@type': 'xsd:integer'
+            },
+            'total': {
+                '@id': 'http://dbpedia.org/page/People',
+                '@type': 'xsd:integer'
+            }
+        }
     })
 
+    result = jsonld.expand(result)
     return result
 
 
@@ -39,16 +65,17 @@ def main(index_file_cid: str) -> NoReturn:
 
     report = parse.parse_html(html_content)
     report = parse.calculate_totals(report)
+    report = enhance.add_regions(report)
 
     report = dataclasses.replace(
         report,
-        index_cid=index_file_cid,
-        page_cid=html_page_cid,
+        index_cid=f'ipfs://{index_file_cid}',
+        page_cid=f'ipfs://{html_page_cid}',
     )
 
     json_report = report_to_jsonld(report)
 
-    print(json.dumps(json_report))
+    print(json.dumps(json_report, indent=2, ensure_ascii=False))
 
     # json_cid = store_to_ipfs(html_page_cid, index_file_cid, json_report)
 
