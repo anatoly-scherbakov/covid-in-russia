@@ -16,6 +16,11 @@ def report_to_jsonld(report: models.Report):
 
     result.update({
         '@context': {
+            'schema': 'https://schema.org/',
+            'iolanta': 'https://iolanta.tech/',
+            'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
+            'dbr': 'http://dbpedia.org/resource/',
+
             'index_cid': {
                 '@id': 'https://schema.org/isBasedOnUrl',
                 '@type': '@id',
@@ -24,30 +29,85 @@ def report_to_jsonld(report: models.Report):
                 '@id': 'https://schema.org/isBasedOnUrl',
                 '@type': '@id',
             },
-            'per_region': {
-                '@id': 'https://schema.org/ItemList',
-                '@container': '@list',
-            },
-            'region': {
-                '@id': 'https://schema.org/Place',
-                '@type': '@id',
-            },
-            'deceased': {
-                '@id': 'http://dbpedia.org/page/Death',
-                '@type': 'xsd:integer'
-            },
-            'recovered': {
-                '@id': 'http://dbpedia.org/page/Recovery',
-                '@type': 'xsd:integer'
-            },
-            'total': {
-                '@id': 'http://dbpedia.org/page/People',
-                '@type': 'xsd:integer'
-            }
-        }
+            'per_region': 'rdfs:member',
+
+            'region': '_:russian_region',
+            'deceased': '_:deceased',
+            'recovered': '_:recovered',
+            'total': '_:total',
+        },
+
+        '@graph': [{
+            '@id': '_:russian_region',
+            'rdfs:subClassOf': 'schema:Place',
+            '@type': '@id',
+            'rdfs:label': [{
+                '@value': 'Регион',
+                '@language': 'ru',
+            }, {
+                '@value': 'Region',
+                '@language': 'en',
+            }]
+        }, {
+            '@id': '_:deceased',
+            '@type': 'rdfs:Property',
+            'rdfs:isDefinedBy': 'dbr:Death',
+            'rdfs:domain': 'xsd:integer',
+            'rdfs:label': [{
+                '@value': 'Умерло',
+                '@language': 'ru',
+            }, {
+                '@value': 'Deceased',
+                '@language': 'en',
+            }]
+        }, {
+            '@id': '_:recovered',
+            '@type': 'rdfs:Property',
+            'rdfs:isDefinedBy': 'dbr:Recovery',
+            'rdfs:domain': 'xsd:integer',
+            'rdfs:label': [{
+                '@value': 'Человек выздоровело',
+                '@language': 'ru'
+            }, {
+                '@value': 'Recovered',
+                '@language': 'en',
+            }]
+        }, {
+            '@id': '_:total',
+            '@type': 'rdfs:Property',
+            'rdfs:isDefinedBy': 'dbr:People',
+            'rdfs:domain': 'xsd:integer',
+            'rdfs:label': [{
+                '@value': 'Всего случаев',
+                '@language': 'ru'
+            }, {
+                '@value': 'Confirmed Cases',
+                '@language': 'en',
+            }]
+        }],
+
+        'iolanta:app': [{
+            '@id': 'iolanta:table',
+        }, {
+            '@id': 'iolanta:map',
+        }],
+
+        'iolanta:target': '_:dataset',
+
+        '@id': '_:dataset',
+        'rdfs:label': [{
+            '@language': 'ru',
+            '@value': 'Заболеваемость COVID-19',
+        }, {
+            '@language': 'en',
+            '@value': 'COVID-19 morbidity',
+        }],
+
+        'schema:datePublished': report.calculated_time,
+        'schema:location': 'dbr:Russia',
     })
 
-    result = jsonld.expand(result)
+    # result = jsonld.expand(result)
     return result
 
 
