@@ -1,5 +1,7 @@
 import dataclasses
+import datetime
 import time
+from datetime import date
 from typing import Optional, Dict, NewType, List
 
 
@@ -25,6 +27,8 @@ class Totals:
 @dataclasses.dataclass(frozen=True)
 class Report:
     per_region: List[Record]
+    reported_time: Optional[datetime.datetime] = None
+
     totals: Optional[Totals] = None
 
     parsed_time: Optional[int] = None

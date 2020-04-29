@@ -1,9 +1,27 @@
 import dataclasses
+import datetime
 import operator
+import re
 
 import bs4
+import pytz
 
 from covid_in_russia import models
+
+MONTHS = (
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
+)
 
 
 def _fetch_cell(row: bs4.Tag, selector: str) -> int:
@@ -21,13 +39,36 @@ def _row_to_record(row: bs4.Tag) -> models.Record:
     )
 
 
+def parse_reported_time(raw_time: str) -> datetime.datetime:
+    groups = re.match(
+        (
+            r'По состоянию на (?P<day>\d+) (?P<month>\w+) ' +
+            r'(?P<hour>\d+):(?P<minute>\d+)'
+        ),
+        raw_time
+    ).groupdict()
+
+    return datetime.datetime(
+        year=2020,
+        month=MONTHS.index(groups['month']) + 1,
+        day=int(groups['day']),
+        hour=int(groups['hour']),
+        minute=int(groups['minute']),
+    ).astimezone(
+        pytz.timezone('Europe/Moscow'),
+    )
+
+
 def parse_html(text: str) -> models.Report:
     """Parse the website HTML."""
     soup = bs4.BeautifulSoup(text, features='html.parser')
 
+    raw_time = soup.select_one('.cv-banner__description').text
+
     rows = soup.select('#map_popup .d-map__list table tr')
 
     return models.Report(
+        reported_time=parse_reported_time(raw_time),
         per_region=list(map(_row_to_record, rows)),
     )
 

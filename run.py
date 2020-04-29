@@ -2,11 +2,11 @@ import dataclasses
 import io
 import json
 from typing import NoReturn
-from fire import Fire
-import ipfshttpclient
-from covid_in_russia import web_archive_index, parse, models, enhance
-from pyld import jsonld
 
+import ipfshttpclient
+from fire import Fire
+
+from covid_in_russia import web_archive_index, parse, models, enhance
 
 HOMEPAGE = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/'
 
@@ -35,6 +35,7 @@ def report_to_jsonld(report: models.Report):
             'deceased': '_:deceased',
             'recovered': '_:recovered',
             'total': '_:total',
+            'reported_time': 'schema:datePublished',
         },
 
         '@graph': [{
@@ -92,22 +93,22 @@ def report_to_jsonld(report: models.Report):
             '@id': 'iolanta:map',
         }],
 
-        'iolanta:target': '_:dataset',
-
         '@id': '_:dataset',
         'rdfs:label': [{
             '@language': 'ru',
-            '@value': 'Заболеваемость COVID-19',
+            '@value': 'Заболеваемость COVID-19 по регионам России',
         }, {
             '@language': 'en',
-            '@value': 'COVID-19 morbidity',
+            '@value': 'COVID-19 morbidity by Russia regions',
         }],
 
-        'schema:datePublished': report.calculated_time,
         'schema:location': 'dbr:Russia',
     })
 
-    # result = jsonld.expand(result)
+    result.update(
+        reported_time=result['reported_time'].isoformat()
+    )
+
     return result
 
 
@@ -122,6 +123,8 @@ def main(index_file_cid: str) -> NoReturn:
 
     with ipfshttpclient.connect() as client:
         html_content = client.cat(html_page_cid).decode('utf-8')
+
+    raise Exception(html_content)
 
     report = parse.parse_html(html_content)
     report = parse.calculate_totals(report)

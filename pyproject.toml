@@ -36,6 +36,7 @@ fire = "^0.3.1"
 ipwb = "^0.2020.4"
 PyLD = "^2.0.2"
 SPARQLWrapper = "^1.8.5"
+python-dateutil = "^2.8.1"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"
