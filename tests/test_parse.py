@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import pytz
 
 from covid_in_russia import parse, models
 
@@ -34,3 +35,8 @@ def test_calculate_totals(html: str):
         recovered=2590,
         deceased=273,
     )
+
+
+def test_reported_time():
+    time = parse.parse_reported_time('По состоянию на 27 апреля 10:50')
+    assert str(time) == '2020-04-27 06:50:00+03:00'
