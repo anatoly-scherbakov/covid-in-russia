@@ -1,17 +1,19 @@
 import dataclasses
 import io
 import json
-from typing import NoReturn
+from datetime import datetime
+from typing import NoReturn, List, Dict, Union
 
 import ipfshttpclient
 from fire import Fire
 
 from covid_in_russia import web_archive_index, parse, models, enhance
+from covid_in_russia.models import Spread
 
-HOMEPAGE = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/'
+HOMEPAGE = 'https://xn--80aesfpebagmfblc0a.xn--p1ai/information/'
 
 
-def report_to_jsonld(report: models.Report):
+def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
     result = dataclasses.asdict(report)
 
     result.update({
@@ -102,7 +104,7 @@ def report_to_jsonld(report: models.Report):
             '@value': 'COVID-19 morbidity by Russia regions',
         }],
 
-        'schema:location': 'dbr:Russia',
+        'schema:location_iso_code': 'dbr:Russia',
     })
 
     result.update(
@@ -112,6 +114,32 @@ def report_to_jsonld(report: models.Report):
     return result
 
 
+def spread_to_jsonld(spread: Spread) -> Dict[str, Union[str, int]]:
+    datum = dataclasses.asdict(spread)
+
+    datum.update(
+        date=spread.date.isoformat(),
+        reported_time=spread.reported_time.isoformat(),
+        retrieved_time=spread.retrieved_time.isoformat(),
+        location=datum.pop('location_iso_code'),
+    )
+
+    return datum
+
+
+def country_data_to_jsonld(dataset: List[Spread]) -> dict:  # type: ignore
+    return {
+        '@context': {
+            'schema': 'https://schema.org/',
+            'location': {
+                '@id': '',
+                '@type': '@id',
+            }
+        },
+        'items': list(map(spread_to_jsonld, dataset)),
+    }
+
+
 def main(index_file_cid: str) -> NoReturn:
     with ipfshttpclient.connect() as client:
         index_content = client.cat(index_file_cid).decode('utf-8')
@@ -119,24 +147,21 @@ def main(index_file_cid: str) -> NoReturn:
     index = web_archive_index.WebArchiveIndex.from_string(index_content)
 
     record = index.find_by_original_uri(HOMEPAGE)
+
+    assert record is not None
+
     html_page_cid = record.data['locator'].split('/')[-1]
 
     with ipfshttpclient.connect() as client:
         html_content = client.cat(html_page_cid).decode('utf-8')
 
-    raise Exception(html_content)
-
-    report = parse.parse_html(html_content)
-    report = parse.calculate_totals(report)
-    report = enhance.add_regions(report)
-
-    report = dataclasses.replace(
-        report,
-        index_cid=f'ipfs://{index_file_cid}',
-        page_cid=f'ipfs://{html_page_cid}',
+    country_data, regions_data = parse.parse_html(
+        html_content,
+        retrieved_time=record.retrieved_time,
+        source_url=f'ipfs://{html_page_cid}',
     )
 
-    json_report = report_to_jsonld(report)
+    json_report = country_data_to_jsonld(country_data)
 
     print(json.dumps(json_report, indent=2, ensure_ascii=False))
 
