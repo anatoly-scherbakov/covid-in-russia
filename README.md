@@ -1,37 +1,22 @@
 # covid-in-russia
 
-[![wemake.services](https://img.shields.io/badge/%20-wemake.services-green.svg?label=%20&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC%2FxhBQAAAAFzUkdCAK7OHOkAAAAbUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP%2F%2F%2F5TvxDIAAAAIdFJOUwAjRA8xXANAL%2Bv0SAAAADNJREFUGNNjYCAIOJjRBdBFWMkVQeGzcHAwksJnAPPZGOGAASzPzAEHEGVsLExQwE7YswCb7AFZSF3bbAAAAABJRU5ErkJggg%3D%3D)](https://wemake.services)
 [![Build Status](https://travis-ci.com/iolanta.tech/covid-in-russia.svg?branch=master)](https://travis-ci.com/iolanta.tech/covid-in-russia)
 [![Coverage](https://coveralls.io/repos/github/iolanta.tech/covid-in-russia/badge.svg?branch=master)](https://coveralls.io/github/iolanta.tech/covid-in-russia?branch=master)
-[![Python Version](https://img.shields.io/pypi/pyversions/covid-in-russia.svg)](https://pypi.org/project/covid-in-russia/)
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 
 Open dataset about COVID-19 spread in Russia.
 
+## Status
 
-## Features
+The purpose of this project is to fetch the official government website page with information about COVID-19, encode it into JSON-LD, and publish to IPFS.
 
-- Fully typed with annotations and checked with mypy, [PEP561 compatible](https://www.python.org/dev/peps/pep-0561/)
-- Add yours!
+Subsequently, the idea is to display this information in a web application.
 
+In the course of developing this, I was able to do some interesting changes to oduwsdl/ipwb tool and learned a bit about JSON-LD. But, now I am going to switch to the web application that will actually display JSON-LD in a user-friendly form.
 
-## Installation
+I can use publicly available JSON-LD documents (for example about some `foaf:Person`) or DBpedia pages as a source material for my potential app.
 
-```bash
-pip install covid-in-russia
-```
-
-
-## Example
-
-Showcase how your project can be used:
-
-```python
-from covid_in_russia.example import some_function
-
-print(some_function(3, 4))
-# => 7
-```
+Maybe I will return to this project later to finally polish it and make its output consumable for Iolanta, but that's not certain.
 
 ## License
 
