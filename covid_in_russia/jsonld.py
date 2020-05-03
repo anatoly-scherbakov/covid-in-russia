@@ -9,10 +9,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
 
     result.update({
         '@context': {
-            'schema': 'https://schema.org/',
             'iolanta': 'https://iolanta.tech/',
-            'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
-            'DBR': 'http://dbpedia.org/resource/',
 
             'index_cid': {
                 '@id': 'https://schema.org/isBasedOnUrl',
@@ -42,42 +39,6 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
                 '@value': 'Region',
                 '@language': 'en',
             }]
-        }, {
-            '@id': '_:deceased',
-            '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'DBR:Death',
-            'rdfs:domain': 'xsd:integer',
-            'rdfs:label': [{
-                '@value': 'Умерло',
-                '@language': 'ru',
-            }, {
-                '@value': 'Deceased',
-                '@language': 'en',
-            }]
-        }, {
-            '@id': '_:recovered',
-            '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'DBR:Recovery',
-            'rdfs:domain': 'xsd:integer',
-            'rdfs:label': [{
-                '@value': 'Человек выздоровело',
-                '@language': 'ru'
-            }, {
-                '@value': 'Recovered',
-                '@language': 'en',
-            }]
-        }, {
-            '@id': '_:total',
-            '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'DBR:People',
-            'rdfs:domain': 'xsd:integer',
-            'rdfs:label': [{
-                '@value': 'Всего случаев',
-                '@language': 'ru'
-            }, {
-                '@value': 'Confirmed Cases',
-                '@language': 'en',
-            }]
         }],
 
         'iolanta:app': [{
@@ -87,15 +48,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
         }],
 
         '@id': '_:dataset',
-        'rdfs:label': [{
-            '@language': 'ru',
-            '@value': 'Заболеваемость COVID-19 по регионам России',
-        }, {
-            '@language': 'en',
-            '@value': 'COVID-19 morbidity by Russia regions',
-        }],
-
-        'schema:location_iso_code': 'DBR:Russia',
+        'schema:location_iso_code': 'dbr:Russia',
     })
 
     result.update(
@@ -106,6 +59,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
 
 
 def spread_to_jsonld(spread: Spread) -> Dict[str, Union[str, int]]:
+    """Convert a data point into JSON-LD dict."""
     datum = dataclasses.asdict(spread)
 
     datum.update(
@@ -118,23 +72,113 @@ def spread_to_jsonld(spread: Spread) -> Dict[str, Union[str, int]]:
     return datum
 
 
-def country_data_to_jsonld(dataset: List[Spread]) -> dict:  # type: ignore
+def graph() -> List[dict]:  # type: ignore
+    """@graph definition."""
+    return [{
+        '@id': '_:deceased',
+        '@type': 'rdfs:Property',
+        'rdfs:isDefinedBy': 'dbr:Death',
+        'rdfs:domain': 'xsd:integer',
+        'rdfs:label': [{
+            '@value': 'Умерло',
+            '@language': 'ru',
+        }, {
+            '@value': 'Deceased',
+            '@language': 'en',
+        }]
+    }, {
+        '@id': '_:recovered',
+        '@type': 'rdfs:Property',
+        'rdfs:isDefinedBy': 'dbr:Recovery',
+        'rdfs:domain': 'xsd:integer',
+        'rdfs:label': [{
+            '@value': 'Человек выздоровело',
+            '@language': 'ru'
+        }, {
+            '@value': 'Recovered',
+            '@language': 'en',
+        }]
+    }, {
+        '@id': '_:total',
+        '@type': 'rdfs:Property',
+        'rdfs:isDefinedBy': 'dbr:People',
+        'rdfs:domain': 'xsd:integer',
+        'rdfs:label': [{
+            '@value': 'Всего случаев',
+            '@language': 'ru'
+        }, {
+            '@value': 'Confirmed Cases',
+            '@language': 'en',
+        }]
+    }]
+
+
+def context() -> dict:  # type: ignore
     return {
-        '@context': {
-            "@version": 1.1,
-            'schema': 'https://schema.org/',
-            'dcat': 'http://www.w3.org/ns/dcat#',
-            'location': {
-                '@id': 'dcat:spatial',
-                '@type': '@vocab',
-                '@context': {
-                    '@vocab': 'http://dbpedia.org/resource/',
-                }
-            },
+        "@version": 1.1,
+
+        'schema': 'https://schema.org/',
+        'dct': 'http://purl.org/dc/terms/',
+        'dcat': 'http://www.w3.org/ns/dcat#',
+        'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
+        'iolanta': 'https://iolanta.tech/',
+
+        'location': {
+            '@id': 'dcat:spatial',
+            '@type': '@vocab',
+            '@context': {
+                '@vocab': 'http://dbpedia.org/resource/',
+            }
         },
 
+        # Can't find anything better at this point.
+        'items': 'dct:hasPart',
+
+        'date': 'schema:dateCreated',
+        'reported_time': 'schema:datePublished',
+        'retrieved_time': 'schema:dateReceived',
+
+        'total': {
+            '@id': '_:total',
+            '@type': 'xsd:integer',
+        },
+        'deceased': {
+            '@id': '_:deceased',
+            '@type': 'xsd:integer',
+        },
+        'recovered': {
+            '@id': '_:recovered',
+            '@type': 'xsd:integer',
+        },
+        'source': {
+            '@id': 'schema:isBasedOn',
+            '@type': '@id',
+        }
+    }
+
+
+def iolanta() -> dict:  # type: ignore
+    return {
+
+    }
+
+
+def country_data_to_jsonld(dataset: List[Spread]) -> dict:  # type: ignore
+    """Formulate dataset for Russia as a whole in JSON-LD."""
+    return {
+        '@context': context(),
+
+        '@graph': graph(),
         '@type': 'dcat:Dataset',
+
         'location': 'RU',
+        'rdfs:label': [{
+            '@language': 'ru',
+            '@value': 'Заболеваемость COVID-19 в России',
+        }, {
+            '@language': 'en',
+            '@value': 'COVID-19 spread in Russia',
+        }],
 
         'items': list(map(spread_to_jsonld, dataset)),
     }
