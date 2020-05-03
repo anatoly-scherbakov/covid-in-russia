@@ -1,4 +1,5 @@
 import dataclasses
+import datetime
 import json
 from typing import List, Optional, Dict
 
@@ -6,7 +7,7 @@ from typing import List, Optional, Dict
 @dataclasses.dataclass(frozen=True)
 class WebArchiveRecord:
     location: str
-    timestamp: int
+    retrieved_time: datetime.datetime
     data: Dict[str, str]
 
 
@@ -19,11 +20,14 @@ def record_from_line(line: str) -> Optional[WebArchiveRecord]:
     if not line:
         return None
 
-    location, timestamp, json_data = line.split(' ', 2)
+    location, retrieved_time, json_data = line.split(' ', 2)
 
     return WebArchiveRecord(
         location=location,
-        timestamp=int(timestamp),
+        retrieved_time=datetime.datetime.strptime(
+            retrieved_time,
+            '%Y%m%d%H%M%S',
+        ),
         data=json.loads(json_data),
     )
 

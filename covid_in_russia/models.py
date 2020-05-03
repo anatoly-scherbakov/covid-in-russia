@@ -37,3 +37,18 @@ class Report:
     page_cid: Optional[str] = None
 
     calculated_time: Optional[int] = dataclasses.field(default_factory=timestamp)
+
+
+@dataclasses.dataclass(frozen=True)
+class Spread:
+    date: datetime.date
+    reported_time: datetime.datetime
+    retrieved_time: datetime.datetime
+
+    location_iso_code: str
+
+    total: int
+    recovered: int
+    deceased: int
+
+    source: str

@@ -1,12 +1,13 @@
-import dataclasses
 import datetime
-import operator
+import json
 import re
+from typing import List, Dict, Union, Tuple
 
 import bs4
 import pytz
 
 from covid_in_russia import models
+from covid_in_russia.models import Spread
 
 MONTHS = (
     'января',
@@ -59,38 +60,86 @@ def parse_reported_time(raw_time: str) -> datetime.datetime:
     )
 
 
-def parse_html(text: str) -> models.Report:
+def parse_country_dataset(
+    dataset: List[Dict[str, Union[str, int]]],
+    retrieved_time: datetime.datetime,
+    reported_time: datetime.datetime,
+    source_url: str,
+) -> List[Spread]:
+    """Parse raw dataset about Russia as a whole."""
+    return [
+        Spread(
+            date=datetime.datetime.strptime(row['date'], '%d.%m.%Y').date(),
+            reported_time=reported_time,
+            retrieved_time=retrieved_time,
+
+            location_iso_code='RU',
+            total=row['sick'],
+            recovered=row['healed'],
+            deceased=row['died'],
+
+            source=source_url,
+        )
+        for row in dataset
+    ]
+
+
+def parse_regions_dataset(
+    dataset: List[Dict[str, Union[str, int]]],
+    reported_time: datetime.datetime,
+    retrieved_time: datetime.datetime,
+    source_url: str,
+) -> List[Spread]:
+    """Parse raw dataset about Russian regions."""
+    return [
+        Spread(
+            date=reported_time.date(),
+            reported_time=reported_time,
+            retrieved_time=retrieved_time,
+
+            location_iso_code=row['code'],
+            total=row['sick'],
+            recovered=row['healed'],
+            deceased=row['died'],
+
+            source=source_url,
+        )
+        for row in dataset
+    ]
+
+
+def parse_html(
+    text: str,
+    retrieved_time: datetime.datetime,
+    source_url: str,
+) -> Tuple[List[Spread], List[Spread]]:
     """Parse the website HTML."""
     soup = bs4.BeautifulSoup(text, features='html.parser')
 
-    raw_time = soup.select_one('.cv-banner__description').text
-
-    rows = soup.select('#map_popup .d-map__list table tr')
-
-    return models.Report(
-        reported_time=parse_reported_time(raw_time),
-        per_region=list(map(_row_to_record, rows)),
+    reported_time = parse_reported_time(
+        soup.select_one('.cv-section__title small').text
     )
 
-
-def calculate_totals(report: models.Report) -> models.Report:
-    """Calculate total values."""
-    total_cases = sum(map(operator.attrgetter('total'), report.per_region))
-
-    recovered_cases = sum(map(
-        operator.attrgetter('recovered'),
-        report.per_region,
-    ))
-
-    deceased_cases = sum(map(
-        operator.attrgetter('deceased'), report.per_region,
-    ))
-
-    return dataclasses.replace(
-        report,
-        totals=models.Totals(
-            total=total_cases,
-            recovered=recovered_cases,
-            deceased=deceased_cases,
-        )
+    raw_country_dataset = json.loads(
+        soup.select_one('cv-stats-virus')[':charts-data']
     )
+
+    country_dataset = parse_country_dataset(
+        dataset=raw_country_dataset,
+        retrieved_time=retrieved_time,
+        reported_time=reported_time,
+        source_url=source_url
+    )
+
+    raw_regions_dataset = json.loads(
+        soup.select_one('cv-spread-overview')[':spread-data']
+    )
+
+    regions_dataset = parse_regions_dataset(
+        dataset=raw_regions_dataset,
+        reported_time=reported_time,
+        retrieved_time=retrieved_time,
+        source_url=source_url,
+    )
+
+    return country_dataset, regions_dataset
