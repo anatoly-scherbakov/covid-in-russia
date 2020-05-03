@@ -15,7 +15,7 @@ wget \
   --restrict-file-names=windows \
   --no-parent \
   --convert-links \
-  https://стопкоронавирус.рф \
+  https://стопкоронавирус.рф/information \
   --warc-file "$warc_file"
 
 ipwb index "$warc_file.warc.gz" > "$warc_file.cdxj"
