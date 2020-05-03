@@ -12,7 +12,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
             'schema': 'https://schema.org/',
             'iolanta': 'https://iolanta.tech/',
             'rdfs': 'https://www.w3.org/2000/01/rdf-schema#',
-            'dbr': 'http://dbpedia.org/resource/',
+            'DBR': 'http://dbpedia.org/resource/',
 
             'index_cid': {
                 '@id': 'https://schema.org/isBasedOnUrl',
@@ -45,7 +45,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
         }, {
             '@id': '_:deceased',
             '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'dbr:Death',
+            'rdfs:isDefinedBy': 'DBR:Death',
             'rdfs:domain': 'xsd:integer',
             'rdfs:label': [{
                 '@value': 'Умерло',
@@ -57,7 +57,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
         }, {
             '@id': '_:recovered',
             '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'dbr:Recovery',
+            'rdfs:isDefinedBy': 'DBR:Recovery',
             'rdfs:domain': 'xsd:integer',
             'rdfs:label': [{
                 '@value': 'Человек выздоровело',
@@ -69,7 +69,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
         }, {
             '@id': '_:total',
             '@type': 'rdfs:Property',
-            'rdfs:isDefinedBy': 'dbr:People',
+            'rdfs:isDefinedBy': 'DBR:People',
             'rdfs:domain': 'xsd:integer',
             'rdfs:label': [{
                 '@value': 'Всего случаев',
@@ -95,7 +95,7 @@ def report_to_jsonld(country_data: List[Spread], regions_data: List[Spread]):
             '@value': 'COVID-19 morbidity by Russia regions',
         }],
 
-        'schema:location_iso_code': 'dbr:Russia',
+        'schema:location_iso_code': 'DBR:Russia',
     })
 
     result.update(
@@ -123,15 +123,18 @@ def country_data_to_jsonld(dataset: List[Spread]) -> dict:  # type: ignore
         '@context': {
             "@version": 1.1,
             'schema': 'https://schema.org/',
+            'dcat': 'http://www.w3.org/ns/dcat#',
             'location': {
-                '@id': 'schema:Place',
-                '@type': '@id',
+                '@id': 'dcat:spatial',
+                '@type': '@vocab',
                 '@context': {
                     '@vocab': 'http://dbpedia.org/resource/',
                 }
             },
         },
 
+        '@type': 'dcat:Dataset',
         'location': 'RU',
+
         'items': list(map(spread_to_jsonld, dataset)),
     }

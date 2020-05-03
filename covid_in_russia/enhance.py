@@ -10,7 +10,7 @@ URL = 'http://dbpedia.org/sparql'
 
 QUERY = '''SELECT ?name ?region WHERE {
   ?region a dbo:AdministrativeRegion .
-  ?region dbo:country dbr:Russia .
+  ?region dbo:country DBR:Russia .
 
   {
     ?region rdfs:label ?name .
