@@ -1,13 +1,16 @@
 import datetime
 import json
+import operator
 
 from pyld.jsonld import expand
-from rdflib import Namespace, DCAT, DCTERMS, SDO
+from rdflib import Namespace, DCTERMS, SDO, DCAT
 
 from covid_in_russia import models
 from covid_in_russia.jsonld import country_data_to_jsonld
 
 DBR = Namespace('http://dbpedia.org/resource/')
+IO = Namespace('https://iolanta.tech/')
+TAB = Namespace('https://iolanta.tech/table/')
 
 
 def test_dataset_location_expanded():
@@ -39,3 +42,21 @@ def test_item():
     assert spread['_:total'][0]['@value'] == 5
     assert spread['_:deceased'][0]['@value'] == 0
     assert spread['_:recovered'][0]['@value'] == 5
+
+
+def test_iolanta_app():
+    document, = expand(country_data_to_jsonld([]))
+
+    app = document[str(IO.app)][0]
+    assert app['@type'][0] == str(TAB.Table)
+    assert list(map(
+        operator.itemgetter('@id'),
+        app[str(TAB.columns)],
+    )) == [
+        str(DCAT.spatial),
+        '_:total',
+        '_:recovered',
+        '_:deceased',
+        str(SDO.dateCreated),
+    ]
+    assert app[str(TAB.row)][0]['@id'] == str(DCTERMS.hasPart)
